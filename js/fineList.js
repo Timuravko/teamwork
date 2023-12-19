@@ -1,27 +1,29 @@
 "use strict";
-window.fineList = {
-    searchFines : searchFines
-}
 
-//Ця зміна містить всі дані які в нас зберігаються у файлі data
+window.fineList = {
+    searchFines: searchFines
+};
+
 let DB = data.finesData;
 
-function searchFines(searchKey){
-    /*
-     Напишіть свій код тут!
-     Як ви бачите функція повертає статичні дані.
-     Замість масиву який прописаний хардкодом, вам необхідно реалізувати цю функцію
-     так, щоб вона повертала масив відповідно переданому значенню в функцію.
-     Саме значення - це "Пошук за номером" або "Пошук за типом штрафу"
-     Тип штрафу може бути тільки
-     - Перевищення швидкості
-     - Невірне паркування
-     - Їзда у не тверезому стані
-     */
+function searchFines(searchKey) {
+    if (!searchKey) {
+        alert('Введите номер или тип штрафа');
+        return [];
+    }
+    const numberRegex = /^\d+$/;
+    const typeRegex = /^(Перевищення швидкості|Невірне паркування|Їзда у не тверезому стані)$/i;
+    const isMatch = (fine) => {
+        return (
+            (numberRegex.test(searchKey) && fine.номер.includes(searchKey)) ||
+            (typeRegex.test(searchKey) && fine.тип.toLowerCase() === searchKey.toLowerCase())
+        );
+    };
+    const result = DB.filter(isMatch);
 
+    if (result.length === 0) {
+        alert('Штраф с таким номером или типом не найден');
+    }
 
-    return [
-        {номер: '001', тип: 'Перевищення швидкості', сума: 100, дата: '2023-01-15'}
-    ];
+    return result;
 }
-
